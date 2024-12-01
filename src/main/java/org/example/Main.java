@@ -1,17 +1,48 @@
 package org.example;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+public class Main extends Application {
+    @Override
+    public void start(Stage primaryStage) {
+        TicketPool ticketPool = new TicketPool(10); // Max capacity of 10 tickets
+
+        Label statusLabel = new Label("System Status: Stopped");
+        Button startButton = new Button("Start System");
+        Button stopButton = new Button("Stop System");
+        stopButton.setDisable(true);
+
+        VBox layout = new VBox(10, statusLabel, startButton, stopButton);
+        layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+
+        Thread vendorThread = new Thread(new Vendor(ticketPool, 10, 1000, "Vendor1"));
+        Thread customerThread = new Thread(new Customer(ticketPool, 2000));
+
+        startButton.setOnAction(event -> {
+            vendorThread.start();
+            customerThread.start();
+            statusLabel.setText("System Status: Running");
+            startButton.setDisable(true);
+            stopButton.setDisable(false);
+        });
+
+        stopButton.setOnAction(event -> {
+            vendorThread.interrupt();
+            customerThread.interrupt();
+            statusLabel.setText("System Status: Stopped");
+            stopButton.setDisable(true);
+        });
+
+        primaryStage.setTitle("Ticketing System");
+        primaryStage.setScene(new Scene(layout, 300, 200));
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
