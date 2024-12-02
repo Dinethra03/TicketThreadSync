@@ -1,7 +1,9 @@
 package org.example;
+
 public class Customer implements Runnable {
     private final TicketPool ticketPool;
-    private final int retrievalInterval; // in milliseconds
+    private final int retrievalInterval;
+    private volatile boolean isRunning = true; // Flag to stop the thread gracefully
 
     public Customer(TicketPool ticketPool, int retrievalInterval) {
         this.ticketPool = ticketPool;
@@ -11,12 +13,18 @@ public class Customer implements Runnable {
     @Override
     public void run() {
         try {
-            while (true) {
+            while (isRunning) {
                 ticketPool.removeTicket();
                 Thread.sleep(retrievalInterval);
             }
         } catch (InterruptedException e) {
-            System.out.println("Customer interrupted.");
+            // Handle thread interruption gracefully
+            System.out.println("Customer thread interrupted.");
         }
+    }
+
+    // Method to stop the customer thread gracefully
+    public void stopThread() {
+        isRunning = false;
     }
 }
