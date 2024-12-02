@@ -1,12 +1,13 @@
 package org.example;
 
 
+
 public class Vendor implements Runnable {
     private final TicketPool ticketPool;
     private final int ticketsPerBatch;
     private final int releaseInterval;
     private final String vendorId;
-    private volatile boolean isRunning = true; // Flag to stop the thread gracefully
+    private volatile boolean isRunning = true;
 
     public Vendor(TicketPool ticketPool, int ticketsPerBatch, int releaseInterval, String vendorId) {
         this.ticketPool = ticketPool;
@@ -21,16 +22,20 @@ public class Vendor implements Runnable {
             for (int i = 0; i < ticketsPerBatch && isRunning; i++) {
                 String ticketId = vendorId + "-T" + (i + 1);
                 ticketPool.addTickets(new Ticket(ticketId));
+                logAction("Added ticket: " + ticketId);
                 Thread.sleep(releaseInterval);
             }
         } catch (InterruptedException e) {
-            // Handle thread interruption gracefully
-            System.out.println("Vendor thread interrupted.");
+            logAction("Vendor thread interrupted.");
+            Thread.currentThread().interrupt();
         }
     }
 
-    // Method to stop the vendor thread gracefully
     public void stopThread() {
         isRunning = false;
+    }
+
+    private void logAction(String message) {
+        System.out.println("[Vendor " + vendorId + "] " + message);
     }
 }
