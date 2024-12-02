@@ -1,36 +1,30 @@
 package org.example;
-import java.util.LinkedList;
 
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class TicketPool {
-    private final LinkedList<Ticket> tickets = new LinkedList<>();
+    private final BlockingQueue<Ticket> tickets;
     private final int maxCapacity;
 
     public TicketPool(int maxCapacity) {
         this.maxCapacity = maxCapacity;
+        this.tickets = new ArrayBlockingQueue<>(maxCapacity);
     }
 
-    public synchronized void addTickets(Ticket ticket) throws InterruptedException {
-        while (tickets.size() >= maxCapacity) {
-            wait();
-        }
-        tickets.add(ticket);
+    public void addTickets(Ticket ticket) throws InterruptedException {
+        tickets.put(ticket); // This is a blocking call that will wait until there is space in the queue
         System.out.println("Added: " + ticket.getTicketId());
-        notifyAll();
     }
 
-    public synchronized Ticket removeTicket() throws InterruptedException {
-        while (tickets.isEmpty()) {
-            wait();
-        }
-        Ticket ticket = tickets.removeFirst();
+    public Ticket removeTicket() throws InterruptedException {
+        Ticket ticket = tickets.take(); // This is a blocking call that will wait until a ticket is available
         System.out.println("Removed: " + ticket.getTicketId());
-        notifyAll();
         return ticket;
     }
 
-    public synchronized int getTicketCount() {
+    public int getTicketCount() {
         return tickets.size();
     }
 }
-
