@@ -1,8 +1,10 @@
 package org.example;
 
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Vendor implements Runnable {
+    private static final Logger logger = LogManager.getLogger(Vendor.class);
     private final TicketPool ticketPool;
     private final int ticketsPerBatch;
     private final int releaseInterval;
@@ -22,20 +24,16 @@ public class Vendor implements Runnable {
             for (int i = 0; i < ticketsPerBatch && isRunning; i++) {
                 String ticketId = vendorId + "-T" + (i + 1);
                 ticketPool.addTickets(new Ticket(ticketId));
-                logAction("Added ticket: " + ticketId);
+                logger.info("Added ticket: {}", ticketId);
                 Thread.sleep(releaseInterval);
             }
         } catch (InterruptedException e) {
-            logAction("Vendor thread interrupted.");
+            logger.warn("Vendor thread interrupted.");
             Thread.currentThread().interrupt();
         }
     }
 
     public void stopThread() {
         isRunning = false;
-    }
-
-    private void logAction(String message) {
-        System.out.println("[Vendor " + vendorId + "] " + message);
     }
 }
