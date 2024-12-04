@@ -1,10 +1,12 @@
 package org.example;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Customer implements Runnable {
+    private static final Logger logger = LogManager.getLogger(Customer.class);
     private final TicketPool ticketPool;
     private final int retrievalInterval;
-    private volatile boolean isRunning = true;
 
     public Customer(TicketPool ticketPool, int retrievalInterval) {
         this.ticketPool = ticketPool;
@@ -13,23 +15,15 @@ public class Customer implements Runnable {
 
     @Override
     public void run() {
-        try {
-            while (isRunning) {
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
                 Ticket ticket = ticketPool.removeTicket();
-                logAction("Purchased ticket: " + ticket.getTicketId());
+                logger.info("Customer retrieved ticket: " + ticket.getTicketId());
                 Thread.sleep(retrievalInterval);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                logger.error("Customer interrupted while retrieving tickets.");
             }
-        } catch (InterruptedException e) {
-            logAction("Customer thread interrupted.");
-            Thread.currentThread().interrupt();
         }
-    }
-
-    public void stopThread() {
-        isRunning = false;
-    }
-
-    private void logAction(String message) {
-        System.out.println("[Customer] " + message);
     }
 }
