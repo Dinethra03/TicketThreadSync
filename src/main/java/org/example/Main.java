@@ -7,7 +7,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -15,31 +14,8 @@ public class Main extends Application {
     private ExecutorService vendorExecutor;
     private ExecutorService customerExecutor;
 
-    // Arrays to store customer and vendor details
-    private ArrayList<String> vendorDetails;
-    private ArrayList<String> customerDetails;
-
     @Override
     public void start(Stage primaryStage) {
-        // Initialize the ArrayLists to store vendor and customer details
-        vendorDetails = new ArrayList<>();
-        customerDetails = new ArrayList<>();
-
-        // Manually add 5 vendors and 10 customers to the list
-        for (int i = 1; i <= 5; i++) {
-            vendorDetails.add("Vendor" + i);
-        }
-        for (int i = 1; i <= 10; i++) {
-            customerDetails.add("Customer" + i);
-        }
-
-        // Output the details of customers and vendors
-        System.out.println("Total Vendors: " + vendorDetails.size());
-        System.out.println("Vendors: " + vendorDetails);
-        System.out.println("Total Customers: " + customerDetails.size());
-        System.out.println("Customers: " + customerDetails);
-
-        // UI Components
         TextField usernameField = new TextField();
         usernameField.setPromptText("Username");
 
@@ -84,15 +60,7 @@ public class Main extends Application {
 
             if (authenticateUser(username, password)) {
                 loginStatusLabel.setText("Login Successful");
-                enableSystemControls(totalTicketsField, maxCapacityField, releaseRateField, retrievalRateField);
-                enableButtons(startButton);
-
-                // Add vendor or customer to the respective list
-                if (username.equals("vendor")) {
-                    vendorDetails.add(username);
-                } else if (username.equals("customer")) {
-                    customerDetails.add(username);
-                }
+                enableSystemControls(totalTicketsField, maxCapacityField, releaseRateField, retrievalRateField, startButton);
             } else {
                 loginStatusLabel.setText("Login Failed. Try Again.");
             }
@@ -150,27 +118,14 @@ public class Main extends Application {
     }
 
     private boolean authenticateUser(String username, String password) {
-        // Example of hardcoded user credentials
-        if (username.equals("vendor") && password.equals("vendor123")) {
-            return true;
-        } else if (username.equals("customer") && password.equals("customer123")) {
-            return true;
+        return (username.equals("vendor") && password.equals("vendor123")) ||
+                (username.equals("customer") && password.equals("customer123"));
+    }
+
+    private void enableSystemControls(Control... controls) {
+        for (Control control : controls) {
+            control.setDisable(false);
         }
-        return false;
-    }
-
-    // Fix: Only enable TextField controls
-    private void enableSystemControls(TextField totalTicketsField, TextField maxCapacityField,
-                                      TextField releaseRateField, TextField retrievalRateField) {
-        totalTicketsField.setDisable(false);
-        maxCapacityField.setDisable(false);
-        releaseRateField.setDisable(false);
-        retrievalRateField.setDisable(false);
-    }
-
-    // Fix: Separate method for enabling start button
-    private void enableButtons(Button startButton) {
-        startButton.setDisable(false);
     }
 
     public static void main(String[] args) {
