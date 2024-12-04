@@ -29,5 +29,3 @@ public class Configuration {
         return retrievalRate;
     }
 }
-
-
