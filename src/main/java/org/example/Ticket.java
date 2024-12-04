@@ -10,4 +10,3 @@ public class Ticket {
         return ticketId;
     }
 }
-
