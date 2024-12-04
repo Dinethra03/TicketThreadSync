@@ -1,7 +1,10 @@
 package org.example;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Vendor implements Runnable {
+    private static final Logger logger = LogManager.getLogger(Vendor.class); // Initialize logger
     private final TicketPool ticketPool;
     private final int ticketsPerBatch;
     private final int releaseInterval;
@@ -25,7 +28,7 @@ public class Vendor implements Runnable {
                 Thread.sleep(releaseInterval);
             }
         } catch (InterruptedException e) {
-            logAction("Vendor thread interrupted.");
+            logError("Error occurred while adding tickets.");
             Thread.currentThread().interrupt();
         }
     }
@@ -35,6 +38,10 @@ public class Vendor implements Runnable {
     }
 
     private void logAction(String message) {
-        System.out.println("[Vendor " + vendorId + "] " + message);
+        logger.info("[Vendor " + vendorId + "] " + message);  // Log info-level messages
+    }
+
+    private void logError(String message) {
+        logger.error("[Vendor " + vendorId + "] " + message);  // Log error-level messages
     }
 }
