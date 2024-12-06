@@ -1,5 +1,7 @@
 package org.example;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -7,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class Main extends Application {
 
@@ -20,6 +23,12 @@ public class Main extends Application {
     private int ticketReleaseRate;
     private int customerRetrievalRate;
     private int maxTicketCapacity;
+    private int ticketsAvailable;
+
+    private Label ticketsAvailableLabel;
+
+    private Timeline ticketReleaseTimeline;
+    private Timeline ticketRetrievalTimeline;
 
     @Override
     public void start(Stage primaryStage) {
@@ -72,7 +81,7 @@ public class Main extends Application {
         viewVendorsButton.setOnAction(e -> showVendorsList());
 
         // Label to display available tickets
-        Label ticketsAvailableLabel = new Label("Tickets Available: 0");
+        ticketsAvailableLabel = new Label("Tickets Available: 0");
         ticketsAvailableLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: green;");
 
         // Layout (VBox) setup for the sliders and system controls
@@ -123,17 +132,57 @@ public class Main extends Application {
         ticketReleaseRate = (int) releaseRateSlider.getValue();
         customerRetrievalRate = (int) retrievalRateSlider.getValue();
         maxTicketCapacity = (int) capacitySlider.getValue();
+        ticketsAvailable = totalTickets;
 
         System.out.println("System started with parameters: ");
         System.out.println("Total Tickets: " + totalTickets);
         System.out.println("Release Rate: " + ticketReleaseRate);
         System.out.println("Retrieval Rate: " + customerRetrievalRate);
         System.out.println("Max Capacity: " + maxTicketCapacity);
+
+        // Update tickets available label initially
+        ticketsAvailableLabel.setText("Tickets Available: " + ticketsAvailable);
+
+        // Set up the Timeline for ticket release
+        ticketReleaseTimeline = new Timeline(
+                new KeyFrame(Duration.millis(ticketReleaseRate), e -> releaseTicket())
+        );
+        ticketReleaseTimeline.setCycleCount(Timeline.INDEFINITE);
+
+        // Set up the Timeline for customer retrieval
+        ticketRetrievalTimeline = new Timeline(
+                new KeyFrame(Duration.millis(customerRetrievalRate), e -> retrieveTicket())
+        );
+        ticketRetrievalTimeline.setCycleCount(Timeline.INDEFINITE);
+
+        // Start the Timelines
+        ticketReleaseTimeline.play();
+        ticketRetrievalTimeline.play();
     }
 
     private void stopSystem() {
         // Logic to stop the system
         System.out.println("System stopped.");
+
+        // Stop the Timelines
+        if (ticketReleaseTimeline != null) ticketReleaseTimeline.stop();
+        if (ticketRetrievalTimeline != null) ticketRetrievalTimeline.stop();
+    }
+
+    private void releaseTicket() {
+        // Logic to release a ticket, ensuring we don't exceed the max capacity
+        if (ticketsAvailable < maxTicketCapacity) {
+            ticketsAvailable++;
+            ticketsAvailableLabel.setText("Tickets Available: " + ticketsAvailable);
+        }
+    }
+
+    private void retrieveTicket() {
+        // Logic to simulate customer retrieval of a ticket
+        if (ticketsAvailable > 0) {
+            ticketsAvailable--;
+            ticketsAvailableLabel.setText("Tickets Available: " + ticketsAvailable);
+        }
     }
 
     private void showSignUpDialog() {
@@ -174,26 +223,35 @@ public class Main extends Application {
         loginDialog.setContentText("Enter your username:");
 
         loginDialog.showAndWait().ifPresent(username -> {
-            TextInputDialog passwordDialog = new TextInputDialog();
-            passwordDialog.setTitle("Login");
-            passwordDialog.setHeaderText("Enter your password");
-            passwordDialog.setContentText("Password:");
-            passwordDialog.showAndWait().ifPresent(password -> {
-                // Here, you can add logic to authenticate the user
-                System.out.println("Login successful!");
-                System.out.println("Username: " + username + ", Password: " + password);
-            });
+            PasswordField passwordField = new PasswordField();
+            passwordField.setPromptText("Password");
+
+            // You can add a custom dialog for password entry here
+
+            System.out.println("Login successful!");
         });
     }
 
     private void showCustomersList() {
-        // Placeholder logic for View Customers button
-        System.out.println("View Customers button clicked!");
+        // Create a simple list to show customers
+        ListView<String> customersList = new ListView<>();
+        customersList.getItems().addAll("Customer 1", "Customer 2", "Customer 3");
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Customers List");
+        alert.getDialogPane().setContent(customersList);
+        alert.showAndWait();
     }
 
     private void showVendorsList() {
-        // Placeholder logic for View Vendors button
-        System.out.println("View Vendors button clicked!");
+        // Create a simple list to show vendors
+        ListView<String> vendorsList = new ListView<>();
+        vendorsList.getItems().addAll("Vendor 1", "Vendor 2", "Vendor 3");
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Vendors List");
+        alert.getDialogPane().setContent(vendorsList);
+        alert.showAndWait();
     }
 
     public static void main(String[] args) {
