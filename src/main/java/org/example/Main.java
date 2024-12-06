@@ -137,13 +137,53 @@ public class Main extends Application {
     }
 
     private void showSignUpDialog() {
-        // Placeholder logic for Sign Up button
-        System.out.println("Sign Up button clicked!");
+        // Create a dialog for user to input sign-up details
+        TextInputDialog signUpDialog = new TextInputDialog();
+        signUpDialog.setTitle("Sign Up");
+        signUpDialog.setHeaderText("Please enter your details");
+        signUpDialog.setContentText("Enter your username:");
+
+        signUpDialog.showAndWait().ifPresent(username -> {
+            TextInputDialog passwordDialog = new TextInputDialog();
+            passwordDialog.setTitle("Sign Up");
+            passwordDialog.setHeaderText("Enter your password");
+            passwordDialog.setContentText("Password:");
+            passwordDialog.showAndWait().ifPresent(password -> {
+                TextInputDialog confirmPasswordDialog = new TextInputDialog();
+                confirmPasswordDialog.setTitle("Sign Up");
+                confirmPasswordDialog.setHeaderText("Confirm your password");
+                confirmPasswordDialog.setContentText("Confirm password:");
+                confirmPasswordDialog.showAndWait().ifPresent(confirmPassword -> {
+                    // Here, you can add validation to check if passwords match
+                    if (password.equals(confirmPassword)) {
+                        System.out.println("Sign Up successful!");
+                        System.out.println("Username: " + username + ", Password: " + password);
+                    } else {
+                        System.out.println("Passwords do not match!");
+                    }
+                });
+            });
+        });
     }
 
     private void showLoginDialog() {
-        // Placeholder logic for Login button
-        System.out.println("Login button clicked!");
+        // Create a dialog for user to input login details
+        TextInputDialog loginDialog = new TextInputDialog();
+        loginDialog.setTitle("Login");
+        loginDialog.setHeaderText("Please enter your login details");
+        loginDialog.setContentText("Enter your username:");
+
+        loginDialog.showAndWait().ifPresent(username -> {
+            TextInputDialog passwordDialog = new TextInputDialog();
+            passwordDialog.setTitle("Login");
+            passwordDialog.setHeaderText("Enter your password");
+            passwordDialog.setContentText("Password:");
+            passwordDialog.showAndWait().ifPresent(password -> {
+                // Here, you can add logic to authenticate the user
+                System.out.println("Login successful!");
+                System.out.println("Username: " + username + ", Password: " + password);
+            });
+        });
     }
 
     private void showCustomersList() {
