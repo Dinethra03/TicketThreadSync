@@ -1,16 +1,21 @@
 package org.example;
 
+import com.google.gson.Gson;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Configuration {
     private final int totalTickets;
-    private final int maxCapacity;
-    private final int releaseRate;
-    private final int retrievalRate;
+    private final int maxTicketCapacity;
+    private final int ticketReleaseRate;
+    private final int customerRetrievalRate;
 
-    public Configuration(int totalTickets, int maxCapacity, int releaseRate, int retrievalRate) {
+    public Configuration(int totalTickets, int maxTicketCapacity, int ticketReleaseRate, int customerRetrievalRate) {
         this.totalTickets = totalTickets;
-        this.maxCapacity = maxCapacity;
-        this.releaseRate = releaseRate;
-        this.retrievalRate = retrievalRate;
+        this.maxTicketCapacity = maxTicketCapacity;
+        this.ticketReleaseRate = ticketReleaseRate;
+        this.customerRetrievalRate = customerRetrievalRate;
     }
 
     public int getTotalTickets() {
@@ -18,14 +23,45 @@ public class Configuration {
     }
 
     public int getMaxCapacity() {
-        return maxCapacity;
+        return maxTicketCapacity;
     }
 
-    public int getReleaseRate() {
-        return releaseRate;
+    public int getTicketReleaseRate() {
+        return ticketReleaseRate;
     }
 
-    public int getRetrievalRate() {
-        return retrievalRate;
+    public int getCustomerRetrievalRate() {
+        return customerRetrievalRate;
+    }
+
+    // Save Configuration to a JSON file
+    public void saveToFile(String filename) {
+        try (FileWriter writer = new FileWriter(filename)) {
+            Gson gson = new Gson();
+            gson.toJson(this, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+/*
+    // Load Configuration from a JSON file
+    public static Configuration loadFromFile(String filename) {
+        try (FileReader reader = new FileReader(filename)) {
+            Gson gson = new Gson();
+            return gson.fromJson(reader, Configuration.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+*/
+    @Override
+    public String toString() {
+        return "Configuration{" +
+                "totalTickets=" + totalTickets +
+                ", maxCapacity=" + maxTicketCapacity +
+                ", releaseRate=" + ticketReleaseRate +
+                ", retrievalRate=" + customerRetrievalRate +
+                '}';
     }
 }
