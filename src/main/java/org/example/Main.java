@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -79,6 +80,16 @@ public class Main extends Application {
         layout.setAlignment(Pos.CENTER);
         layout.setStyle("-fx-background-color: #f0f0f0; -fx-padding: 20;");
 
+        // HBox for Sign Up and View Customers buttons (left and right sides)
+        HBox signUpHBox = new HBox(10);
+        signUpHBox.setAlignment(Pos.CENTER);
+        signUpHBox.getChildren().addAll(signUpButton, viewCustomersButton);
+
+        // HBox for Login and View Vendors buttons (below their counterparts)
+        HBox loginHBox = new HBox(10);
+        loginHBox.setAlignment(Pos.CENTER);
+        loginHBox.getChildren().addAll(loginButton, viewVendorsButton);
+
         layout.getChildren().addAll(
                 new Label("Total Number of Tickets"),
                 totalTicketsSlider, totalTicketsField,
@@ -90,8 +101,7 @@ public class Main extends Application {
                 capacitySlider, capacityField,
                 ticketsAvailableLabel,
                 startButton, stopButton,
-                signUpButton, loginButton,
-                viewCustomersButton, viewVendorsButton
+                signUpHBox, loginHBox
         );
 
         // Scene and Stage setup
@@ -148,4 +158,3 @@ public class Main extends Application {
         launch(args);
     }
 }
-
