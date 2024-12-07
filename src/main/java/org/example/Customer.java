@@ -20,7 +20,7 @@ public class Customer implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 Ticket ticket = ticketPool.removeTicket();
-                System.out.println("[Customer " +  Thread.currentThread().getName() +  "] Bought ticket: " + ticket.getTicketId());
+                System.out.println("[Customer " + customerId + "] Bought ticket: " + ticket.getTicketId());
                 logger.info("[Customer " + customerId + "] Bought ticket: " + ticket.getTicketId());
                 Thread.sleep(customerRetrievalRate * 1000);
             } catch (InterruptedException e) {
