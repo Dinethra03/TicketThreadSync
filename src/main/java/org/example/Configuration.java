@@ -45,7 +45,6 @@ public class Configuration {
         }
     }
 
-
     // Load Configuration from a JSON file
     public static Configuration loadFromFile(String filename) {
         try (FileReader reader = new FileReader(filename)) {
@@ -57,4 +56,3 @@ public class Configuration {
         }
     }
 }
-
