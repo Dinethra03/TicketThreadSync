@@ -7,10 +7,12 @@ public class Customer implements Runnable {
     private static final Logger logger = LogManager.getLogger(Customer.class);
     private final TicketPool ticketPool;
     private final int customerRetrievalRate;
+    private final String customerId;
 
-    public Customer(TicketPool ticketPool, int customerRetrievalRate) {
+    public Customer(TicketPool ticketPool, int customerRetrievalRate, String customerId) {
         this.ticketPool = ticketPool;
         this.customerRetrievalRate = customerRetrievalRate;
+        this.customerId = customerId;
     }
 
     @Override
@@ -18,12 +20,12 @@ public class Customer implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 Ticket ticket = ticketPool.removeTicket();
-                System.out.println("[ " +  Thread.currentThread().getName() +  "] Bought ticket: " + ticket.getTicketId());
-                logger.info("Customer retrieved ticket: " + ticket.getTicketId());
+                System.out.println("[Customer " +  Thread.currentThread().getName() +  "] Bought ticket: " + ticket.getTicketId());
+                logger.info("[Customer " + customerId + "] Bought ticket: " + ticket.getTicketId());
                 Thread.sleep(customerRetrievalRate * 1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                logger.error("Customer interrupted while retrieving tickets.");
+                logger.error("[Customer " + customerId + "] Interrupted while retrieving tickets.");
             }
         }
     }
