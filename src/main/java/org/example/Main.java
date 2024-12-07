@@ -100,6 +100,8 @@ public class Main {
             String filename = scanner.nextLine();
             config.saveToFile(filename);
             System.out.println("Configuration saved to " + filename);
+            config.loadFromFile(filename);
+
         }
 
         return config;
