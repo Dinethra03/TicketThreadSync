@@ -58,16 +58,3 @@ public class Configuration {
     }
 }
 
-    /*
-    @Override
-    public String toString() {
-        return "Configuration{" +
-                "totalTickets=" + totalTickets +
-                ", maxCapacity=" + maxTicketCapacity +
-                ", releaseRate=" + ticketReleaseRate +
-                ", retrievalRate=" + customerRetrievalRate +
-                '}';
-    }
-}
-
-     */
