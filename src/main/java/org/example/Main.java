@@ -13,14 +13,14 @@ public class Main {
 
 
         //Starting the Vendor  thread
-        Vendor vendor = new Vendor(ticketPool,config.getTotalTickets(), config.getTicketReleaseRate(), "Vendor");
+        Vendor vendor = new Vendor(ticketPool,config.getTotalTickets(), config.getTicketReleaseRate(), "Vendor-1");
         Thread vendorThread = new Thread(vendor);
         vendorThread.start();
 
         //Starting the Customer thread
-        Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate());
+        Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate(), "Customer-1");
         Thread customerThread = new Thread(customer);
-        customerThread.setName("Customer ");
+        customerThread.setName("Customer-1");
         customerThread.start();
 
         System.out.println("Enter 'stop' to terminate the program   ");
@@ -29,6 +29,7 @@ public class Main {
             if(stopcmd.equals("stop")){
                 vendorThread.interrupt();
                 customerThread.interrupt();
+                break;
             }
         }
 
@@ -40,8 +41,8 @@ public class Main {
     private static Configuration promptForConfiguration(Scanner scanner) {
         int totalTickets = promptForInt(scanner, "Enter total tickets: ");
         int maxCapacity = promptForInt(scanner, "Enter max capacity: ");
-        int ticketReleaseRate = promptForInt(scanner, "Enter ticket release rate : ");
-        int customerRetrievalRate = promptForInt(scanner, "Enter customer retrieval rate : ");
+        int ticketReleaseRate = promptForInt(scanner, "Enter ticket release rate (in seconds): ");
+        int customerRetrievalRate = promptForInt(scanner, "Enter customer retrieval rate (in seconds) : ");
 
         Configuration config = new Configuration(totalTickets, maxCapacity, ticketReleaseRate, customerRetrievalRate);
 
