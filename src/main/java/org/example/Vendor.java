@@ -30,7 +30,7 @@ public class Vendor implements Runnable {
                 Thread.sleep(ticketReleaseRate * 1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                logger.error("[ " + vendorId + "] Interrupted while adding tickets.");
+                logger.error("[vendor " + vendorId + "] Interrupted while adding tickets.");
             }
         }
     }
