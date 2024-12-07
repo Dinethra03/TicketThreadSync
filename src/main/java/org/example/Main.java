@@ -2,9 +2,10 @@ package org.example;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
-
 
 public class Main extends Application {
 
@@ -16,14 +17,12 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Ticketing System");
 
-        // Create an instance of ConfigUI to get the configuration layout
-        ConfigUI configUI = new ConfigUI();  // Make sure ConfigUI is in the same package or import it if it's in a different package
+        // Show the Configuration UI first
+        ConfigUI configUI = new ConfigUI();
+        configUI.start(primaryStage);  // Pass the primaryStage to ConfigUI
 
-        // Create the configuration scene
-        Scene configScene = new Scene(configUI.createConfigLayout(primaryStage), 400, 300);
-
-        // Set the scene for the primaryStage to show the configuration form
-        primaryStage.setScene(configScene);
-        primaryStage.show();
+        // If the configuration is saved, you can move on to start the system
+        // Add more code to start the vendor/customer threads and ticket pool
     }
+
 }
