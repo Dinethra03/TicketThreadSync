@@ -12,23 +12,29 @@ public class Main {
         TicketPool ticketPool = new TicketPool(config.getMaxCapacity());
 
 
-        //Starting the Vendor  thread
-        Vendor vendor = new Vendor(ticketPool,config.getTotalTickets(), config.getTicketReleaseRate(), "Vendor-1");
-        Thread vendorThread = new Thread(vendor);
-        vendorThread.start();
+        // Create and start multiple vendor threads (6 vendors)
+        for (int i = 1; i <= 6; i++) {
+            Vendor vendor = new Vendor(ticketPool, config.getTotalTickets(), config.getTicketReleaseRate(), "Vendor-" + i);
+            Thread vendorThread = new Thread(vendor);
+            vendorThread.setName("Vendor-" + i); // Set the name explicitly
+            vendorThread.start();
+        }
 
-        //Starting the Customer thread
-        Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate(), "Customer-1");
-        Thread customerThread = new Thread(customer);
-        customerThread.setName("Customer-1");
-        customerThread.start();
+        // Create and start multiple customer threads (10 customers)
+        for (int i = 1; i <= 10; i++) {
+            Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate(), "Customer-" + i);
+            Thread customerThread = new Thread(customer);
+            customerThread.setName("Customer-" + i); // Set the name explicitly
+            customerThread.start();
+        }
 
-        System.out.println("Enter 'stop' to terminate the program   ");
-        while   (true){
+
+        System.out.println("Enter 'stop' to terminate the program:");
+        while (true) {
             String stopcmd = scanner.nextLine();
-            if(stopcmd.equals("stop")){
-                vendorThread.interrupt();
-                customerThread.interrupt();
+            if (stopcmd.equals("stop")) {
+                // In a real application, you would handle stopping all threads more gracefully.
+                System.out.println("Stopping all threads...");
                 break;
             }
         }
