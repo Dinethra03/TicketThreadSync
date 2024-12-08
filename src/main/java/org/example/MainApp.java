@@ -11,11 +11,12 @@ public class MainApp extends Application {
     private TicketPool ticketPool;
     private Thread[] vendorThreads;
     private Thread[] customerThreads;
-    private Label ticketCountLabel;  // UI Label for ticket count
-    private TextArea outputArea;  // Output Area to simulate console output
+    private Label ticketCountLabel;
+    private Label ticketPoolStatusLabel;
+    private TextArea outputArea;
 
     public static void main(String[] args) {
-        launch(args); // Start the JavaFX application
+        launch(args);
     }
 
     @Override
@@ -24,19 +25,17 @@ public class MainApp extends Application {
 
         // Ticket Pool Status Section
         VBox statusBox = new VBox(10);
-        Label ticketStatusLabel = new Label("Ticket Pool Status:");
-        ticketCountLabel = new Label("Tickets in Pool: 0"); // Real-time updates
-        statusBox.getChildren().addAll(ticketStatusLabel, ticketCountLabel);
+        ticketCountLabel = new Label("Tickets in Pool: 0");
+        ticketPoolStatusLabel = new Label("Ticket Pool Status: 0 tickets available.");
+        statusBox.getChildren().addAll(ticketCountLabel, ticketPoolStatusLabel);
 
-        // Output Area (simulating CLI output)
+        // Output Area
         outputArea = new TextArea();
-        outputArea.setEditable(false);  // Make the output area read-only
+        outputArea.setEditable(false);
         outputArea.setPrefHeight(150);
 
-        // Configuration Inputs Section
+        // Configuration Inputs
         GridPane configGrid = new GridPane();
-        configGrid.setHgap(10);
-        configGrid.setVgap(10);
         Label totalTicketsLabel = new Label("Total Tickets:");
         TextField totalTicketsField = new TextField();
         Label maxCapacityLabel = new Label("Max Capacity:");
@@ -51,57 +50,49 @@ public class MainApp extends Application {
         configGrid.addRow(2, releaseRateLabel, releaseRateField);
         configGrid.addRow(3, retrievalRateLabel, retrievalRateField);
 
-        // Control Panel Section
+        // Control Panel
         HBox controlBox = new HBox(10);
         Button startButton = new Button("Start");
         Button stopButton = new Button("Stop");
-        Button exitButton = new Button("Exit");
-        controlBox.getChildren().addAll(startButton, stopButton, exitButton);
+        controlBox.getChildren().addAll(startButton, stopButton);
 
-        // Root Layout
         VBox root = new VBox(20, statusBox, configGrid, controlBox, outputArea);
-        Scene scene = new Scene(root, 600, 600);
-
-        primaryStage.setScene(scene);
+        primaryStage.setScene(new Scene(root, 600, 600));
         primaryStage.show();
 
         // Button Actions
         startButton.setOnAction(e -> {
             try {
-                // Get configuration values from the fields
                 int totalTickets = Integer.parseInt(totalTicketsField.getText());
                 int maxCapacity = Integer.parseInt(maxCapacityField.getText());
                 int releaseRate = Integer.parseInt(releaseRateField.getText());
                 int retrievalRate = Integer.parseInt(retrievalRateField.getText());
 
-                // Initialize TicketPool
                 ticketPool = new TicketPool(maxCapacity);
 
-                // Start Vendor Threads
                 vendorThreads = new Thread[6];
                 for (int i = 0; i < 6; i++) {
-                    Vendor vendor = new Vendor(ticketPool, totalTickets, releaseRate, "Vendor-" + (i + 1), ticketCountLabel, outputArea);
+                    Vendor vendor = new Vendor(ticketPool, totalTickets, releaseRate, "Vendor-" + (i + 1), ticketCountLabel, ticketPoolStatusLabel, outputArea);
                     vendorThreads[i] = new Thread(vendor);
                     vendorThreads[i].start();
                 }
 
-                // Start Customer Threads
                 customerThreads = new Thread[10];
                 for (int i = 0; i < 10; i++) {
-                    Customer customer = new Customer(ticketPool, retrievalRate, ticketCountLabel, outputArea);
+                    Customer customer = new Customer(ticketPool, retrievalRate, ticketCountLabel, ticketPoolStatusLabel, outputArea);
                     customerThreads[i] = new Thread(customer, "Customer-" + (i + 1));
                     customerThreads[i].start();
                 }
             } catch (NumberFormatException ex) {
-                showAlert("Invalid Input", "Please enter valid numbers for all fields.");
+                showAlert("Invalid Input", "Please enter valid numbers.");
             }
         });
 
-        stopButton.setOnAction(e -> stopThreads(vendorThreads, customerThreads));
-        exitButton.setOnAction(e -> Platform.exit());
+        stopButton.setOnAction(e -> {
+            stopThreads(vendorThreads, customerThreads);
+        });
     }
 
-    // Helper to stop threads
     private void stopThreads(Thread[]... threadGroups) {
         for (Thread[] threads : threadGroups) {
             if (threads != null) {
@@ -114,7 +105,6 @@ public class MainApp extends Application {
         }
     }
 
-    // Helper for alerts
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -122,12 +112,14 @@ public class MainApp extends Application {
         alert.showAndWait();
     }
 
-    // Method to access ticketCountLabel from MainApp
     public Label getTicketCountLabel() {
         return ticketCountLabel;
     }
 
-    // Method to access outputArea from MainApp
+    public Label getTicketPoolStatusLabel() {
+        return ticketPoolStatusLabel;
+    }
+
     public TextArea getOutputArea() {
         return outputArea;
     }
