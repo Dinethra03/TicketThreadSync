@@ -3,15 +3,20 @@ package org.example;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import javafx.scene.control.Label;  // Import Label class
+import javafx.scene.control.TextArea;  // Import TextArea class
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        // Start JavaFX application in a separate thread
+        Thread javafxThread = new Thread(() -> {
+            MainApp.main(args);  // Launches the JavaFX application
+        });
+        javafxThread.setDaemon(true);  // Set as daemon so it doesn't block JVM shutdown
+        javafxThread.start();  // Start the JavaFX thread
 
-        // Initialize the GUI first (MainApp)
-        MainApp mainApp = new MainApp();
-        // You would need to start the JavaFX application to get the ticketCountLabel, but for CLI, we will mock this.
-        mainApp.start(new Stage()); // Or you could manage this with an interface if integrating the two systems
+        // Continue running the CLI program
+        Scanner scanner = new Scanner(System.in);
 
         while (true) {
             // Prompt the user for configuration and validate input
@@ -30,9 +35,14 @@ public class Main {
                     List<Thread> vendorThreads = new ArrayList<>();
                     List<Thread> customerThreads = new ArrayList<>();
 
+                    // Get the ticketCountLabel and outputArea from MainApp
+                    MainApp mainApp = new MainApp();
+                    Label ticketCountLabel = mainApp.getTicketCountLabel();  // Getting label from MainApp
+                    TextArea outputArea = mainApp.getOutputArea();  // Getting TextArea from MainApp
+
                     // Start 6 Vendor threads
                     for (int i = 1; i <= 6; i++) {
-                        Vendor vendor = new Vendor(ticketPool, config.getTotalTickets(), config.getTicketReleaseRate(), "Vendor-" + i, mainApp.getTicketCountLabel());
+                        Vendor vendor = new Vendor(ticketPool, config.getTotalTickets(), config.getTicketReleaseRate(), "Vendor-" + i, ticketCountLabel, outputArea);
                         Thread vendorThread = new Thread(vendor);
                         vendorThread.start();
                         vendorThreads.add(vendorThread); // Add to the vendor threads list
@@ -40,9 +50,9 @@ public class Main {
 
                     // Start 10 Customer threads
                     for (int i = 1; i <= 10; i++) {
-                        Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate(), mainApp.getTicketCountLabel());
+                        Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate(), ticketCountLabel, outputArea);
                         Thread customerThread = new Thread(customer);
-                        customerThread.setName("Customer-" + i); // Set the thread name as Customer-1, Customer-2, etc.
+                        customerThread.setName("Customer-" + (i + 1)); // Set the thread name as Customer-1, Customer-2, etc.
                         customerThread.start();
                         customerThreads.add(customerThread);
                     }
