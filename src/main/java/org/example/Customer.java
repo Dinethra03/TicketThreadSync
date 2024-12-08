@@ -24,6 +24,7 @@ public class Customer implements Runnable {
 
     @Override
     public void run() {
+        // Run ticket-buying logic in this thread
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 Ticket ticket = ticketPool.removeTicket(); // Retrieve a ticket from the pool
@@ -37,7 +38,7 @@ public class Customer implements Runnable {
 
                 Thread.sleep(customerRetrievalRate * 1000); // Sleep before retrieving the next ticket
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                Thread.currentThread().interrupt(); // Handle thread interruption
             }
         }
     }
