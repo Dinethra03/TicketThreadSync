@@ -35,14 +35,16 @@ public class Main {
                     List<Thread> vendorThreads = new ArrayList<>();
                     List<Thread> customerThreads = new ArrayList<>();
 
-                    // Get the ticketCountLabel and outputArea from MainApp
+                    // Get the ticketCountLabel, ticketPoolStatusLabel, and outputArea from MainApp
                     MainApp mainApp = new MainApp();
                     Label ticketCountLabel = mainApp.getTicketCountLabel();  // Getting label from MainApp
+                    Label ticketPoolStatusLabel = mainApp.getTicketPoolStatusLabel();  // Getting status label from MainApp
                     TextArea outputArea = mainApp.getOutputArea();  // Getting TextArea from MainApp
 
                     // Start 6 Vendor threads
                     for (int i = 1; i <= 6; i++) {
-                        Vendor vendor = new Vendor(ticketPool, config.getTotalTickets(), config.getTicketReleaseRate(), "Vendor-" + i, ticketCountLabel, outputArea);
+                        Vendor vendor = new Vendor(ticketPool, config.getTotalTickets(), config.getTicketReleaseRate(),
+                                "Vendor-" + i, ticketCountLabel, ticketPoolStatusLabel, outputArea);
                         Thread vendorThread = new Thread(vendor);
                         vendorThread.start();
                         vendorThreads.add(vendorThread); // Add to the vendor threads list
@@ -50,9 +52,10 @@ public class Main {
 
                     // Start 10 Customer threads
                     for (int i = 1; i <= 10; i++) {
-                        Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate(), ticketCountLabel, outputArea);
-                        Thread customerThread = new Thread(customer);
-                        customerThread.setName("Customer-" + (i + 1)); // Set the thread name as Customer-1, Customer-2, etc.
+                        Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate(),
+                                ticketCountLabel, ticketPoolStatusLabel, outputArea);
+                        Thread customerThread = new Thread(customer, "Customer-" +i);
+
                         customerThread.start();
                         customerThreads.add(customerThread);
                     }
