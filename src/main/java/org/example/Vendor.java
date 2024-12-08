@@ -14,20 +14,21 @@ public class Vendor implements Runnable {
     private final int ticketReleaseRate;
     private final String vendorId;
     private final Label ticketCountLabel;  // UI Label for ticket count
+    private final Label ticketPoolStatusLabel;  // UI Label for ticket pool status
     private final TextArea outputArea;  // Output area for logging
 
-    public Vendor(TicketPool ticketPool, int totalTickets, int ticketReleaseRate, String vendorId, Label ticketCountLabel, TextArea outputArea) {
+    public Vendor(TicketPool ticketPool, int totalTickets, int ticketReleaseRate, String vendorId, Label ticketCountLabel, Label ticketPoolStatusLabel, TextArea outputArea) {
         this.ticketPool = ticketPool;
         this.totalTickets = totalTickets;
         this.ticketReleaseRate = ticketReleaseRate;
         this.vendorId = vendorId;
         this.ticketCountLabel = ticketCountLabel;
+        this.ticketPoolStatusLabel = ticketPoolStatusLabel;
         this.outputArea = outputArea;
     }
 
     @Override
     public void run() {
-        // Add tickets to the pool
         for (int i = 1; i <= totalTickets; i++) {
             if (Thread.currentThread().isInterrupted()) {
                 break;
@@ -37,14 +38,14 @@ public class Vendor implements Runnable {
                     Ticket ticket = new Ticket("Ticket-" + (ticketCounter++));
                     ticketPool.addTickets(ticket);
 
-                    // Update UI
+                    // Update UI using Platform.runLater()
                     Platform.runLater(() -> {
                         ticketCountLabel.setText("Tickets in Pool: " + ticketPool.getTicketCount());
+                        ticketPoolStatusLabel.setText("Ticket Pool Status: " + ticketPool.getTicketCount() + " tickets available.");
                         outputArea.appendText("[ " + vendorId + "] Added ticket: " + ticket.getTicketId() + "\n");
                     });
                 }
-
-                Thread.sleep(ticketReleaseRate * 1000); // Sleep before releasing next ticket
+                Thread.sleep(ticketReleaseRate * 1000); // Sleep before adding the next ticket
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
