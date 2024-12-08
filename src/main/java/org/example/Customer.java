@@ -11,29 +11,31 @@ public class Customer implements Runnable {
     private final TicketPool ticketPool;
     private final int customerRetrievalRate;
     private final Label ticketCountLabel;  // UI Label for ticket count
+    private final Label ticketPoolStatusLabel;  // UI Label for ticket pool status
     private final TextArea outputArea;  // Output area for logging
 
-    public Customer(TicketPool ticketPool, int customerRetrievalRate, Label ticketCountLabel, TextArea outputArea) {
+    public Customer(TicketPool ticketPool, int customerRetrievalRate, Label ticketCountLabel, Label ticketPoolStatusLabel, TextArea outputArea) {
         this.ticketPool = ticketPool;
         this.customerRetrievalRate = customerRetrievalRate;
         this.ticketCountLabel = ticketCountLabel;
+        this.ticketPoolStatusLabel = ticketPoolStatusLabel;
         this.outputArea = outputArea;
     }
 
     @Override
     public void run() {
-        // Retrieve tickets from the pool
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                Ticket ticket = ticketPool.removeTicket();  // Retrieve a ticket from the pool
+                Ticket ticket = ticketPool.removeTicket(); // Retrieve a ticket from the pool
 
-                // Update UI
+                // Update UI using Platform.runLater()
                 Platform.runLater(() -> {
                     ticketCountLabel.setText("Tickets in Pool: " + ticketPool.getTicketCount());
+                    ticketPoolStatusLabel.setText("Ticket Pool Status: " + ticketPool.getTicketCount() + " tickets available.");
                     outputArea.appendText("[ " + Thread.currentThread().getName() + "] Bought ticket: " + ticket.getTicketId() + "\n");
                 });
 
-                Thread.sleep(customerRetrievalRate * 1000); // Sleep before retrieving next ticket
+                Thread.sleep(customerRetrievalRate * 1000); // Sleep before retrieving the next ticket
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
