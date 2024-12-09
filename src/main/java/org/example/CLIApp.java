@@ -1,7 +1,5 @@
 package org.example;
 
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -23,15 +21,10 @@ public class CLIApp {
             if (command.equals("start")) {
                 TicketPool ticketPool = new TicketPool(config.getMaxCapacity());
 
-                // Create UI components for ticketCountLabel, ticketPoolStatusLabel, and outputArea
-                Label ticketCountLabel = new Label();
-                Label ticketPoolStatusLabel = new Label();
-                TextArea outputArea = new TextArea();
-
-                // Start Vendor Threads
+                // CLI doesn't require JavaFX components, so just handle threads
                 List<Thread> vendorThreads = new ArrayList<>();
                 for (int i = 1; i <= 6; i++) {
-                    Vendor vendor = new Vendor(ticketPool, config.getTotalTickets(), config.getTicketReleaseRate(), "Vendor-" + i, ticketCountLabel, ticketPoolStatusLabel, outputArea);
+                    Vendor vendor = new Vendor(ticketPool, config.getTotalTickets(), config.getTicketReleaseRate(), "Vendor-" + i, null, null, null);
                     Thread vendorThread = new Thread(vendor);
                     vendorThread.start();
                     vendorThreads.add(vendorThread);
@@ -41,7 +34,7 @@ public class CLIApp {
                 List<Thread> customerThreads = new ArrayList<>();
                 for (int i = 1; i <= 10; i++) {
                     // Pass customer name like "Customer-1", "Customer-2", etc.
-                    Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate(), ticketCountLabel, ticketPoolStatusLabel, outputArea, "Customer-" + i);
+                    Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate(), null, null, null, "Customer-" + i);
                     Thread customerThread = new Thread(customer, "Customer-" + i);
                     customerThread.start();
                     customerThreads.add(customerThread);
