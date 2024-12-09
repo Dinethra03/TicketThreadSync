@@ -1,31 +1,26 @@
 package org.example;
 
-import javafx.scene.control.Label; // Import Label
-import javafx.scene.control.TextArea; // Import TextArea
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.application.Platform;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class Customer implements Runnable {
-    private static final Logger logger = LogManager.getLogger(Customer.class);
     private final TicketPool ticketPool;
     private final int customerRetrievalRate;
 
-    private final Label ticketCountLabel;  // UI Label for ticket count
-    private final Label ticketPoolStatusLabel;  // UI Label for ticket pool status
-    private final TextArea outputArea;  // Output area for logging
-
-    public Customer(TicketPool ticketPool, int customerRetrievalRate) {
-        this(ticketPool, customerRetrievalRate, null, null, null);
-    }
+    private final Label ticketCountLabel;
+    private final Label ticketPoolStatusLabel;
+    private final TextArea outputArea;
+    private String name; // Customer name
 
     public Customer(TicketPool ticketPool, int customerRetrievalRate,
-                    Label ticketCountLabel, Label ticketPoolStatusLabel, TextArea outputArea) {
+                    Label ticketCountLabel, Label ticketPoolStatusLabel, TextArea outputArea, String name) {
         this.ticketPool = ticketPool;
         this.customerRetrievalRate = customerRetrievalRate;
         this.ticketCountLabel = ticketCountLabel;
         this.ticketPoolStatusLabel = ticketPoolStatusLabel;
         this.outputArea = outputArea;
+        this.name = name != null ? name : "Unknown";
     }
 
     @Override
@@ -34,19 +29,15 @@ public class Customer implements Runnable {
             try {
                 Ticket ticket = ticketPool.removeTicket();
 
-                // Log to console (CLI mode)
-                String customerID = Thread.currentThread().getName();  // Get customer ID (thread name)
+                String customerID = Thread.currentThread().getName();
                 System.out.println("[ " + customerID + "] Bought ticket: " + ticket.getTicketId());
 
-
-                // Update UI (GUI mode)
                 if (ticketCountLabel != null && ticketPoolStatusLabel != null && outputArea != null) {
                     Platform.runLater(() -> {
                         ticketCountLabel.setText("Tickets in Pool: " + ticketPool.getTicketCount());
                         ticketPoolStatusLabel.setText("Ticket Pool Status: " + ticketPool.getTicketCount() + " tickets available.");
-                        outputArea.appendText("[ " + customerID + "] Bought ticket: " + ticket.getTicketId() + "\n");  // Include customer ID
+                        outputArea.appendText("[ " + customerID + "] Bought ticket: " + ticket.getTicketId() + "\n");
                     });
-
                 }
 
                 Thread.sleep(customerRetrievalRate * 1000); // Sleep before retrieving the next ticket
@@ -56,9 +47,12 @@ public class Customer implements Runnable {
         }
     }
 
-    // Overriding toString method
+    public String getName() {
+        return this.name;
+    }
+
     @Override
     public String toString() {
-        return "Customer {Retrieval Rate=" + customerRetrievalRate + "s}";
+        return "Customer {Retrieval Rate=" + customerRetrievalRate + "s, Name=" + name + "}";
     }
 }
