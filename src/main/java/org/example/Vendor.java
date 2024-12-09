@@ -50,7 +50,18 @@ public class Vendor implements Runnable {
                 Thread.sleep(ticketReleaseRate * 1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+
+            }
+
             }
         }
+    // Override the toString() method to return a readable format
+    @Override
+    public String toString() {
+        return "Vendor {ID = " + vendorId + ", Ticket to Release = " + totalTickets +
+                ", Release Rate = " + ticketReleaseRate + "}";
     }
 }
+
+
+
