@@ -1,23 +1,22 @@
 package org.example;
 
-import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import javafx.application.Platform;
 
 public class Vendor implements Runnable {
-    private static final Logger logger = LogManager.getLogger(Vendor.class);
-    private static int ticketCounter = 1; // Shared ticket counter across all vendor threads
+    private static int ticketCounter = 1;
     private final TicketPool ticketPool;
     private final int totalTickets;
     private final int ticketReleaseRate;
     private final String vendorId;
-    private final Label ticketCountLabel;  // UI Label for ticket count
-    private final Label ticketPoolStatusLabel;  // UI Label for ticket pool status
-    private final TextArea outputArea;  // Output area for logging
 
-    public Vendor(TicketPool ticketPool, int totalTickets, int ticketReleaseRate, String vendorId, Label ticketCountLabel, Label ticketPoolStatusLabel, TextArea outputArea) {
+    private final Label ticketCountLabel;
+    private final Label ticketPoolStatusLabel;
+    private final TextArea outputArea;
+
+    public Vendor(TicketPool ticketPool, int totalTickets, int ticketReleaseRate, String vendorId,
+                  Label ticketCountLabel, Label ticketPoolStatusLabel, TextArea outputArea) {
         this.ticketPool = ticketPool;
         this.totalTickets = totalTickets;
         this.ticketReleaseRate = ticketReleaseRate;
@@ -38,14 +37,17 @@ public class Vendor implements Runnable {
                     Ticket ticket = new Ticket("Ticket-" + (ticketCounter++));
                     ticketPool.addTickets(ticket);
 
-                    // Update UI using Platform.runLater()
-                    Platform.runLater(() -> {
-                        ticketCountLabel.setText("Tickets in Pool: " + ticketPool.getTicketCount());
-                        ticketPoolStatusLabel.setText("Ticket Pool Status: " + ticketPool.getTicketCount() + " tickets available.");
-                        outputArea.appendText("[ " + vendorId + "] Added ticket: " + ticket.getTicketId() + "\n");
-                    });
+                    System.out.println("[ " + vendorId + "] Added ticket: " + ticket.getTicketId());
+
+                    if (ticketCountLabel != null && ticketPoolStatusLabel != null && outputArea != null) {
+                        Platform.runLater(() -> {
+                            ticketCountLabel.setText("Tickets in Pool: " + ticketPool.getTicketCount());
+                            ticketPoolStatusLabel.setText("Ticket Pool Status: " + ticketPool.getTicketCount() + " tickets available.");
+                            outputArea.appendText("[ " + vendorId + "] Added ticket: " + ticket.getTicketId() + "\n");
+                        });
+                    }
                 }
-                Thread.sleep(ticketReleaseRate * 1000); // Sleep before adding the next ticket
+                Thread.sleep(ticketReleaseRate * 1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
