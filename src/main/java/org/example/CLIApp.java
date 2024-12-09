@@ -1,5 +1,7 @@
 package org.example;
 
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,16 +13,25 @@ public class CLIApp {
         while (true) {
             Configuration config = promptForConfiguration(scanner);
 
+            // Save the configuration to a file
+            config.saveToFile("config.json");
+            System.out.println("Configuration saved to 'config.json'.");
+
             System.out.println("Do you want to start the program? 'start' / 'exit': ");
             String command = scanner.nextLine().toLowerCase();
 
             if (command.equals("start")) {
                 TicketPool ticketPool = new TicketPool(config.getMaxCapacity());
 
+                // Create UI components for ticketCountLabel, ticketPoolStatusLabel, and outputArea
+                Label ticketCountLabel = new Label();
+                Label ticketPoolStatusLabel = new Label();
+                TextArea outputArea = new TextArea();
+
                 // Start Vendor Threads
                 List<Thread> vendorThreads = new ArrayList<>();
                 for (int i = 1; i <= 6; i++) {
-                    Vendor vendor = new Vendor(ticketPool, config.getTotalTickets(), config.getTicketReleaseRate(), "Vendor-" + i);
+                    Vendor vendor = new Vendor(ticketPool, config.getTotalTickets(), config.getTicketReleaseRate(), "Vendor-" + i, ticketCountLabel, ticketPoolStatusLabel, outputArea);
                     Thread vendorThread = new Thread(vendor);
                     vendorThread.start();
                     vendorThreads.add(vendorThread);
@@ -29,7 +40,8 @@ public class CLIApp {
                 // Start Customer Threads
                 List<Thread> customerThreads = new ArrayList<>();
                 for (int i = 1; i <= 10; i++) {
-                    Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate());
+                    // Pass customer name like "Customer-1", "Customer-2", etc.
+                    Customer customer = new Customer(ticketPool, config.getCustomerRetrievalRate(), ticketCountLabel, ticketPoolStatusLabel, outputArea, "Customer-" + i);
                     Thread customerThread = new Thread(customer, "Customer-" + i);
                     customerThread.start();
                     customerThreads.add(customerThread);
