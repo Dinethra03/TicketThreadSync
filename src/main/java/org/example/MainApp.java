@@ -66,22 +66,30 @@ public class MainApp extends Application {
         // Control Panel
         HBox controlBox = new HBox(10);
         Button startButton = new Button("Start");
+        startButton.setStyle("-fx-background-color:  #4CAF50; -fx-text-fill: white; ");
         Button stopButton = new Button("Stop");
+        stopButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
         controlBox.getChildren().addAll(startButton, stopButton);
 
         // Authentication Buttons (Sign Up and Login)
         Button signUpButton = new Button("Sign Up");
+        signUpButton.setStyle("-fx-background-color: #008CBA; -fx-text-fill: white;");
         Button loginButton = new Button("Login");
+        loginButton.setStyle("-fx-background-color: #FFC107; -fx-text-fill: black;");
         HBox authButtons = new HBox(10, signUpButton, loginButton);
 
         // View Customers and View Vendors Buttons
         Button viewCustomersButton = new Button("View Customers");
+        viewCustomersButton.setStyle("-fx-background-color: #FF5722; -fx-text-fill: white;");
         Button viewVendorsButton = new Button("View Vendors");
+        viewVendorsButton.setStyle("-fx-background-color: #9C27B0; -fx-text-fill: white;");
         HBox viewButtons = new HBox(10, viewCustomersButton, viewVendorsButton);
 
         // Customer actions
         bookTicketButton = new Button("Book Ticket");
+        bookTicketButton.setStyle("-fx-background-color: #3F51B5; -fx-text-fill: white;");
         showTicketPricesButton = new Button("Show Ticket Prices");
+        showTicketPricesButton.setStyle("-fx-background-color: #8BC34A; -fx-text-fill: white;");
         bookTicketButton.setDisable(true);
         showTicketPricesButton.setDisable(true);
         ticketPriceLabel = new Label("Ticket Prices: N/A");
