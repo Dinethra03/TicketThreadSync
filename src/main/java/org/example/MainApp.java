@@ -6,11 +6,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.VBox;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainApp extends Application {
     private TicketPool ticketPool;
@@ -20,9 +20,13 @@ public class MainApp extends Application {
     private Label ticketPoolStatusLabel;
     private TextArea outputArea;
 
-    private Map<String, User> usersDatabase = new HashMap<>();  // Updated to store user with type
+    private Map<String, User> usersDatabase = new HashMap<>();  // Stores users with type
     private List<Vendor> vendorList = new ArrayList<>();
     private List<Customer> customerList = new ArrayList<>();
+
+    private Button bookTicketButton;
+    private Button showTicketPricesButton;
+    private Label ticketPriceLabel;
 
     public static void main(String[] args) {
         launch(args);
@@ -75,7 +79,17 @@ public class MainApp extends Application {
         Button viewVendorsButton = new Button("View Vendors");
         HBox viewButtons = new HBox(10, viewCustomersButton, viewVendorsButton);
 
-        VBox root = new VBox(20, statusBox, configGrid, controlBox, outputArea, authButtons, viewButtons);
+        // Customer actions
+        bookTicketButton = new Button("Book Ticket");
+        showTicketPricesButton = new Button("Show Ticket Prices");
+        bookTicketButton.setDisable(true);
+        showTicketPricesButton.setDisable(true);
+        ticketPriceLabel = new Label("Ticket Prices: N/A");
+
+        // Customer options
+        HBox customerOptionsBox = new HBox(10, bookTicketButton, showTicketPricesButton, ticketPriceLabel);
+
+        VBox root = new VBox(20, statusBox, configGrid, controlBox, outputArea, authButtons, viewButtons, customerOptionsBox);
         primaryStage.setScene(new Scene(root, 600, 600));
         primaryStage.show();
 
@@ -99,7 +113,7 @@ public class MainApp extends Application {
 
                 customerThreads = new Thread[10];
                 for (int i = 0; i < 10; i++) {
-                    Customer customer = new Customer(ticketPool, retrievalRate, ticketCountLabel, ticketPoolStatusLabel, outputArea);
+                    Customer customer = new Customer(ticketPool, retrievalRate, ticketCountLabel, ticketPoolStatusLabel, outputArea, "Customer-" + (i + 1));
                     customerList.add(customer);
                     customerThreads[i] = new Thread(customer, "Customer-" + (i + 1));
                     customerThreads[i].start();
@@ -118,6 +132,10 @@ public class MainApp extends Application {
         // View Customers and View Vendors Button Handlers
         viewCustomersButton.setOnAction(e -> showCustomerDetails());
         viewVendorsButton.setOnAction(e -> showVendorDetails());
+
+        // Customer actions (Book Ticket and Show Ticket Prices)
+        bookTicketButton.setOnAction(e -> bookTicket());
+        showTicketPricesButton.setOnAction(e -> showTicketPrices());
     }
 
     private void stopThreads(Thread[]... threadGroups) {
@@ -221,9 +239,13 @@ public class MainApp extends Application {
 
             if (usersDatabase.containsKey(username) && usersDatabase.get(username).getPassword().equals(password) && usersDatabase.get(username).getUserType().equals(userType)) {
                 outputArea.appendText("User Logged In: " + username + " (" + userType + ")\n");
+                if ("Customer".equals(userType)) {
+                    bookTicketButton.setDisable(false);
+                    showTicketPricesButton.setDisable(false);
+                }
                 loginStage.close();
             } else {
-                showAlert("Login Failed", "Invalid username, password, or user type.");
+                showAlert("Login Failed", "Invalid username or password.");
             }
         });
 
@@ -234,55 +256,31 @@ public class MainApp extends Application {
     }
 
     private void showCustomerDetails() {
-        StringBuilder customerDetails = new StringBuilder("Customer Details:\n");
+        outputArea.appendText("Customers: " + customerList.size() + "\n");
         for (Customer customer : customerList) {
-            customerDetails.append(customer.toString()).append("\n");
+            outputArea.appendText(customer.toString() + "\n");
         }
-        outputArea.setText(customerDetails.toString());
     }
 
     private void showVendorDetails() {
-        StringBuilder vendorDetails = new StringBuilder("Vendor Details:\n");
+
         for (Vendor vendor : vendorList) {
-            vendorDetails.append(vendor.toString()).append("\n");
-        }
-        outputArea.setText(vendorDetails.toString());
-    }
-
-    public Label getTicketCountLabel() {
-        return ticketCountLabel;
-    }
-
-    public Label getTicketPoolStatusLabel() {
-        return ticketPoolStatusLabel;
-    }
-
-    public TextArea getOutputArea() {
-        return outputArea;
-    }
-
-    // User class to store user data with type
-    public static class User {
-        private String username;
-        private String password;
-        private String userType;
-
-        public User(String username, String password, String userType) {
-            this.username = username;
-            this.password = password;
-            this.userType = userType;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public String getUserType() {
-            return userType;
+            outputArea.appendText(vendor.toString() + "\n");
         }
     }
+
+    private void bookTicket() {
+        // Implement your ticket booking logic here
+        outputArea.appendText("Ticket booked!\n");
+    }
+
+    private void showTicketPrices() {
+        // Assume you have a ticket price variable or method to calculate the price
+        double ticketPrice = 50.0; // or calculate this dynamically if needed
+
+        // Update the label with the actual price
+        ticketPriceLabel.setText("Ticket Prices: $" + ticketPrice);
+        outputArea.appendText("Ticket prices displayed!\n");
+    }
+
 }
