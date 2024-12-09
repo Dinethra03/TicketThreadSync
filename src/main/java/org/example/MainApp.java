@@ -75,7 +75,7 @@ public class MainApp extends Application {
         Button signUpButton = new Button("Sign Up");
         signUpButton.setStyle("-fx-background-color: #008CBA; -fx-text-fill: white;");
         Button loginButton = new Button("Login");
-        loginButton.setStyle("-fx-background-color: #FFC107; -fx-text-fill: black;");
+        loginButton.setStyle("-fx-background-color: #008CBA; -fx-text-fill: white;");
         HBox authButtons = new HBox(10, signUpButton, loginButton);
 
         // View Customers and View Vendors Buttons
@@ -89,7 +89,7 @@ public class MainApp extends Application {
         bookTicketButton = new Button("Book Ticket");
         bookTicketButton.setStyle("-fx-background-color: #3F51B5; -fx-text-fill: white;");
         showTicketPricesButton = new Button("Show Ticket Prices");
-        showTicketPricesButton.setStyle("-fx-background-color: #8BC34A; -fx-text-fill: white;");
+        showTicketPricesButton.setStyle("-fx-background-color: #3F51B5; -fx-text-fill: white;");
         bookTicketButton.setDisable(true);
         showTicketPricesButton.setDisable(true);
         ticketPriceLabel = new Label("Ticket Prices: N/A");
