@@ -50,12 +50,15 @@ public class CLIApp {
                         System.out.println("Invalid command. Enter 'stop' to terminate.");
                     }
                 }
-            } else if (command.equals("exit")) {
+            } else if (command.equalsIgnoreCase("exit")) {
                 System.out.println("Exiting program...");
-                break;
+                System.exit(0);
             } else {
-                System.out.println("Invalid command. Please enter 'start' or 'exit'.");
+                System.out.println("Invalid command. System Stopped");
             }
+
+            break;
+
         }
     }
 
@@ -81,7 +84,10 @@ public class CLIApp {
                 scanner.next(); // Consume invalid input
             }
             System.out.println("Please enter a valid positive integer.");
+
         }
+
+
     }
 
     private void stopThreads(List<Thread>... threadGroups) {
@@ -91,4 +97,5 @@ public class CLIApp {
             }
         }
     }
+
 }
