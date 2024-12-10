@@ -1,9 +1,8 @@
 package org.example;
 
-import com.google.gson.Gson;
-
-import java.io.FileWriter;
-import java.io.IOException;
+import com.google.gson.Gson; //Import Gson library for converting objects to JSON
+import java.io.FileWriter; //Import FileWriter for writing data to files
+import java.io.IOException; //Import IOException for handling file input or output exceptions
 
 public class Configuration {
     private final int totalTickets;
@@ -11,6 +10,8 @@ public class Configuration {
     private final int ticketReleaseRate;
     private final int customerRetrievalRate;
 
+
+    //Constructor for initializing the configuration with the specified values
     public Configuration(int totalTickets, int maxTicketCapacity, int ticketReleaseRate, int customerRetrievalRate) {
         this.totalTickets = totalTickets;
         this.maxTicketCapacity = maxTicketCapacity;
@@ -34,18 +35,19 @@ public class Configuration {
         return customerRetrievalRate;
     }
 
-    // Save Configuration to a JSON file
+    // Method for saving configuration data to a JSON file
     public void saveToFile(String filename) {
-        try (FileWriter writer = new FileWriter(filename)) {
-            Gson gson = new Gson();
-            gson.toJson(this, writer);
+        try (FileWriter writer = new FileWriter(filename)) { //Create a FileWriter to write to the specified file
+            Gson gson = new Gson(); //Create a Gson instance for object to JSON conversion
+            gson.toJson(this, writer); //Convert the Configuration object to JSON and write it to the file
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    // Method for saving configuration data to a plain text file
     public void saveToTextFile(String filename){
-        try (FileWriter writer = new FileWriter(filename)) {
+        try (FileWriter writer = new FileWriter(filename)) { //Create a FileWriter to write to the specified text file
             writer.write("Total Tickets: " + totalTickets + "\n");
             writer.write("Max Capacity: " + maxTicketCapacity + "\n");
             writer.write("Ticket Release Rate: " + ticketReleaseRate + "\n");
@@ -55,8 +57,5 @@ public class Configuration {
         }
     }
 
-
-
-
-    }
+}
 
