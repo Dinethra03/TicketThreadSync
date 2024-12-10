@@ -15,6 +15,9 @@ public class CLIApp {
             config.saveToFile("config.json");
             System.out.println("Configuration saved to 'config.json'.");
 
+            config.saveToTextFile("config.txt");
+            System.out.println("Configuration saved to 'config.txt'.");
+
             System.out.println("Do you want to start the program? 'start' / 'exit': ");
             String command = scanner.nextLine().toLowerCase();
 
