@@ -44,6 +44,17 @@ public class Configuration {
         }
     }
 
+    public void saveToTextFile(String filename){
+        try (FileWriter writer = new FileWriter(filename)) {
+            writer.write("Total Tickets: " + totalTickets + "\n");
+            writer.write("Max Capacity: " + maxTicketCapacity + "\n");
+            writer.write("Ticket Release Rate: " + ticketReleaseRate + "\n");
+            writer.write("Customer Retrieval Rate: " + customerRetrievalRate + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
