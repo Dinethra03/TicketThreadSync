@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox; //Importing VBox layout which organizes child n
 import java.util.*;
 import java.util.ArrayList;
 
-public class MainApp extends Application { //Main JavaFx application class extendind Application
+public class MainApp extends Application { //Main JavaFx application class extending Application
     private TicketPool ticketPool;
 
     //Threads for vendor and customer for operations
